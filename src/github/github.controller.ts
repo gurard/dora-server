@@ -9,12 +9,9 @@ export class GithubController {
   getDeploymentFrequency(
     @Query('owner') owner: string,
     @Query('repo') repo: string,
-    @Query('limit') limit: number = 10,
-    @Query('order') order: 'asc' | 'desc' = 'desc',
+    @Query('env') env: string,
   ) {
-    // return this.githubService.getDeploymentFrequency(owner, repo, limit, order);
-    // return a response saying hello world
-    return 'Hello World';
+    return this.githubService.getDeploymentFrequency(owner, repo, env);
   }
 
   // Add other DORA metric routes here

@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class GithubService {
   private readonly githubApiUrl = 'https://api.github.com';
-  private readonly personalAccessToken = process.env.GITHUB_TOKEN;
+  private readonly personalAccessToken = '';
 
   constructor(private readonly httpService: HttpService) {}
 
@@ -39,17 +39,15 @@ export class GithubService {
     return results;
   }
 
-  getDeploymentFrequency(
+  async getDeploymentFrequency(
     owner: string,
     repo: string,
-    limit: number,
-    order: string,
-  ): Observable<number> {
-    const url = `${this.githubApiUrl}/repos/${owner}/${repo}/deployments`;
+    env: string,
+  ): Promise<number> {
+    const url = `${this.githubApiUrl}/repos/${owner}/${repo}/deployments?environment=${env}`;
+    console.log('url', url);
 
-    return this.httpService
-      .get(url, { headers: this.getHeaders() })
-      .pipe(map((response: AxiosResponse) => response.data.length));
+    return await this.fetchPaginatedData(url).then((data) => data.length);
   }
 
   // Add other DORA metrics methods here
