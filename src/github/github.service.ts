@@ -43,11 +43,11 @@ export class GithubService {
     owner: string,
     repo: string,
     env: string,
-  ): Promise<number> {
+  ): Promise<any[]> {
     const url = `${this.githubApiUrl}/repos/${owner}/${repo}/deployments?environment=${env}`;
     console.log('url', url);
 
-    return await this.fetchPaginatedData(url).then((data) => data.length);
+    return await this.fetchPaginatedData(url);
   }
 
   // Add other DORA metrics methods here
