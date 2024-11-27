@@ -1,8 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { GithubService } from './github.service';
+import { GithubService } from '../services/github.service';
 
 @Controller()
-export class GithubController {
+export class DeploymentFrequencyController {
   constructor(private readonly githubService: GithubService) {}
 
   @Get('deployment-frequency')
