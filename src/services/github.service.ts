@@ -3,6 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { Observable, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IDeployment } from '../models/deployment.interface';
 
 @Injectable()
 export class GithubService {
@@ -45,9 +46,17 @@ export class GithubService {
     env: string,
   ): Promise<any[]> {
     const url = `${this.githubApiUrl}/repos/${owner}/${repo}/deployments?environment=${env}`;
+    let deployments: IDeployment[] = [];
+
     console.log('url', url);
 
-    return await this.fetchPaginatedData(url);
+    let paginatedDeployments = await this.fetchPaginatedData(url);
+
+    for (let i = 0; i < paginatedDeployments.length; ++i) {
+      deployments.push({ deploymentDate: paginatedDeployments[i].created_at });
+    }
+
+    return deployments;
   }
 
   // Add other DORA metrics methods here
