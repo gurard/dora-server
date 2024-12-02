@@ -7,14 +7,14 @@ import { IDeployment } from '../models/deployment.interface';
 
 @Injectable()
 export class GithubService {
-  private readonly githubApiUrl = 'https://api.github.com';
-  private readonly personalAccessToken = '';
+  private readonly platformUrl = 'https://api.github.com';
+  private readonly token = process.env.TOKEN_GITHUB;
 
   constructor(private readonly httpService: HttpService) {}
 
   private getHeaders() {
     return {
-      Authorization: `token ${this.personalAccessToken}`,
+      Authorization: `token ${this.token}`,
       'Content-Type': 'application/json',
     };
   }
@@ -40,12 +40,12 @@ export class GithubService {
     return results;
   }
 
-  async getDeploymentFrequency(
+  async getDeployments(
     owner: string,
     repo: string,
     env: string,
   ): Promise<any[]> {
-    const url = `${this.githubApiUrl}/repos/${owner}/${repo}/deployments?environment=${env}`;
+    const url = `${this.platformUrl}/repos/${owner}/${repo}/deployments?environment=${env}`;
     let deployments: IDeployment[] = [];
 
     console.log('url', url);
