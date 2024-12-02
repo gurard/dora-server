@@ -20,11 +20,12 @@ export class DeploymentFrequencyController {
 
   @Get('azure')
   getDeploymentsAzure(
-    @Query('owner') owner: string,
-    @Query('repo') repo: string,
+    @Query('org') org: string,
+    @Query('project') project: string,
+    @Query('pipeline') pipeline: string,
     @Query('env') env: string,
   ) {
-    return this.azureDevopsService.getDeployments(owner, repo, env);
+    return this.azureDevopsService.getDeployments(org, project, pipeline, env);
   }
 
   // Add other DORA metric routes here

@@ -4,8 +4,6 @@ import axios from 'axios';
 @Injectable()
 export class AzureDevOpsService {
   private readonly platformUrl = 'https://vsrm.dev.azure.com';
-  // private readonly project = '{project}';
-  private readonly projectURLEncoded = '';
   private readonly token = process.env.TOKEN_AZURE_DEVOPS;
 
   private getHeaders() {
@@ -15,8 +13,16 @@ export class AzureDevOpsService {
     };
   }
 
-  async getDeployments(owner: string, project: string, env: string) {
-    const url = `${this.platformUrl}/${owner}/${this.projectURLEncoded}/_apis/release/releases?api-version=7.1`;
+  async getDeployments(
+    org: string,
+    project: string,
+    pipeline: string,
+    env: string,
+  ) {
+    const encodedOrg = encodeURIComponent(org);
+    const encodedProject = encodeURIComponent(project);
+
+    const url = `${this.platformUrl}/${encodedOrg}/${encodedProject}/_apis/release/releases?api-version=7.1`;
 
     console.log('url', url);
     try {
