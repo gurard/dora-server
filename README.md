@@ -2,10 +2,6 @@
 
 nest.js API for serving data used to generate DORA metrics
 
-## Deployment Frequency API
-
-This API provides endpoints to retrieve deployment frequency metrics from GitHub and Azure DevOps. It is part of a larger initiative to track and measure DevOps performance metrics.
-
 ## Endpoints
 
 ### 1. Get GitHub Deployments
@@ -23,12 +19,12 @@ This API provides endpoints to retrieve deployment frequency metrics from GitHub
 **Example Request:**
 
 ```http
-GET /deployment-frequency/github?owner=mckesson&repo=providerpay-web&env=prod
+GET /deployment-frequency/github?owner=TestOwner&repo=TestRepo&env=prod
 ```
 
 **Example Response:**
 
-```
+```json
 [
   {
     "deploymentDate": "2024-11-12T21:27:40.137Z"
@@ -58,12 +54,12 @@ GET /deployment-frequency/github?owner=mckesson&repo=providerpay-web&env=prod
 **Example Request:**
 
 ```http
-GET /deployment-frequency/azure?org=HealthMartAtlas&project=HealthMart%20Atlas&pipeline=PPReportsDB&env=prod
+GET /deployment-frequency/azure?org=TestOrg&project=TestProject&pipeline=TestPipeline&env=prod
 ```
 
 **Example Response:**
 
-```
+```json
 [
   {
     "deploymentDate": "2024-11-12T21:27:40.137Z"
@@ -77,7 +73,43 @@ GET /deployment-frequency/azure?org=HealthMartAtlas&project=HealthMart%20Atlas&p
 ]
 ```
 
+### 3. Calculate MTTR (Mean Time to Recovery) Using Dynatrace Problems
+
+**Endpoint:** `GET /mttr/dynatrace`
+
+**Description:** Calculates the Mean Time to Recovery (MTTR) for closed problems within a specified management zone over the last 10 weeks using data from Dynatrace.
+
+**Query Parameters:**
+
+- `managementZone` (string): The management zone identifier for which MTTR is to be calculated.
+
+**Example Request:**
+
+```http
+GET /mttr/dynatrace?managementZone=test-mz
+```
+
+**Example Response:**
+
+```json
+[
+  {
+    "week": "11/01",
+    "mttr": 120
+  },
+  {
+    "week": "10/25",
+    "mttr": 90
+  },
+  {
+    "week": "10/18",
+    "mttr": 75
+  }
+]
+```
+
 ## Services
 
 - **GitHubService:** Handles communication with the GitHub API to fetch deployment data.
 - **AzureDevOpsService:** Manages interactions with Azure DevOps API to gather deployment metrics.
+- **DynatraceService:** Responsible for interacting with Dynatrace API to retrieve closed problems data for MTTR calculations.
