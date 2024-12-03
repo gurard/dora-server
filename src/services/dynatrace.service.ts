@@ -22,6 +22,6 @@ export class DynatraceService {
         problemSelector: `status("CLOSED"),managementZones("${managementZone}")`,
       },
     });
-    return response.data || [];
+    return response.data.problems || [];
   }
 }
