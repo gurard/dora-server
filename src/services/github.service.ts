@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
-import { Observable, firstValueFrom } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { IDeployment } from '../models/deployment.interface';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class GithubService {
@@ -46,15 +43,7 @@ export class GithubService {
     env: string,
   ): Promise<any[]> {
     const url = `${this.platformUrl}/repos/${owner}/${repo}/deployments?environment=${env}`;
-    let deployments: IDeployment[] = [];
-
-    console.log('url', url);
-
-    let paginatedDeployments = await this.fetchPaginatedData(url);
-
-    for (let i = 0; i < paginatedDeployments.length; ++i) {
-      deployments.push({ deploymentDate: paginatedDeployments[i].created_at });
-    }
+    let deployments = await this.fetchPaginatedData(url);
 
     return deployments;
   }
