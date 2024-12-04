@@ -48,5 +48,9 @@ export class GithubService {
     return deployments;
   }
 
+  getLeadTime(owner: string, repo: string) {
+    return ['hello', 'world'];
+  }
+
   // Add other DORA metrics methods here
 }
