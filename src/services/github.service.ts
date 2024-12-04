@@ -8,7 +8,7 @@ import { IDeployment } from '../models/deployment.interface';
 @Injectable()
 export class GithubService {
   private readonly platformUrl = 'https://api.github.com';
-  private readonly token = process.env.TOKEN_GITHUB;
+  private readonly token = process.env.DORA_GITHUB_TOKEN;
 
   constructor(private readonly httpService: HttpService) {}
 

@@ -4,8 +4,8 @@ import * as moment from 'moment';
 
 @Injectable()
 export class DynatraceService {
-  private readonly dynatraceApiUrl = ''; // Replace with actual URL
-  private readonly apiToken = ''; // Replace with your API token
+  private readonly dynatraceApiUrl = process.env.DORA_DYNATRACE_URL;
+  private readonly apiToken = process.env.DORA_DYNATRACE_TOKEN;
 
   async getClosedProblems(
     managementZone: string,

@@ -5,7 +5,7 @@ import { IDeployment } from '../models/deployment.interface';
 @Injectable()
 export class AzureDevOpsService {
   private readonly platformUrl = 'https://vsrm.dev.azure.com';
-  private readonly token = process.env.TOKEN_AZURE_DEVOPS;
+  private readonly token = process.env.DORA_AZURE_TOKEN;
 
   private getHeaders() {
     return {
