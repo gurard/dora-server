@@ -1,32 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { GithubService } from '../services/github.service';
 import { AzureDevOpsService } from '../services/azuredevops.service';
 import { IDeployment } from '../models/deployment.interface';
 
-@Controller('deployment-frequency')
-export class DeploymentFrequencyController {
-  constructor(
-    private readonly githubService: GithubService,
-    private readonly azureDevopsService: AzureDevOpsService,
-  ) {}
+@Controller('azure')
+export class AzureDevOpsController {
+  constructor(private readonly azureDevopsService: AzureDevOpsService) {}
 
-  @Get('github')
-  async getDeploymentsGithub(
-    @Query('owner') owner: string,
-    @Query('repo') repo: string,
-    @Query('env') env: string,
-  ) {
-    let response: IDeployment[] = [];
-    let deployments = await this.githubService.getDeployments(owner, repo, env);
-
-    deployments.map((deployment) => {
-      response.push({ deploymentDate: deployment.created_at });
-    });
-
-    return response;
-  }
-
-  @Get('azure')
+  @Get('deployment-frequency')
   async getDeploymentsAzure(
     @Query('org') org: string,
     @Query('project') project: string,
