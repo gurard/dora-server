@@ -2,11 +2,11 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { DynatraceService } from '../services/dynatrace.service';
 import * as moment from 'moment';
 
-@Controller('mttr')
-export class MttrController {
+@Controller('dynatrace')
+export class DynatraceController {
   constructor(private readonly dynatraceService: DynatraceService) {}
 
-  @Get('dynatrace')
+  @Get('mttr')
   async calculateMttr(@Query('managementZone') managementZone: string) {
     const mttrResults = [];
     const today = moment();
