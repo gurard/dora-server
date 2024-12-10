@@ -1,6 +1,12 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import {
+  differenceInWeeks,
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+} from 'date-fns';
 
 @Injectable()
 export class KubernetesService {
@@ -72,11 +78,17 @@ export class KubernetesService {
       );
       const pods = podsResponse.data.items;
 
-      // Map the pods to their names and statuses
-      const relatedPods = pods.map((pod) => ({
-        name: pod.metadata.name,
-        status: pod.status.phase,
-      }));
+      // Map the pods to their names, statuses, and ages
+      const relatedPods = pods.map((pod) => {
+        const creationTimestamp = new Date(pod.metadata.creationTimestamp);
+        const age = this.calculateFormattedAge(creationTimestamp);
+
+        return {
+          name: pod.metadata.name,
+          status: pod.status.phase,
+          age: age,
+        };
+      });
 
       return {
         imageTag,
@@ -88,6 +100,36 @@ export class KubernetesService {
         error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  private calculateFormattedAge(creationDate: Date): string {
+    const now = new Date();
+
+    const weeks = differenceInWeeks(now, creationDate);
+    const days = differenceInDays(now, creationDate) % 7;
+    const hours = differenceInHours(now, creationDate) % 24;
+    const minutes = differenceInMinutes(now, creationDate) % 60;
+
+    let ageParts = [];
+    if (weeks > 0) {
+      ageParts.push(`${weeks}w`);
+    }
+    if (days > 0) {
+      ageParts.push(`${days}d`);
+    }
+    if (hours > 0) {
+      ageParts.push(`${hours}h`);
+    }
+    if (minutes > 0) {
+      ageParts.push(`${minutes}m`);
+    }
+
+    // If the pod is less than a minute old
+    if (ageParts.length === 0) {
+      ageParts.push('0m');
+    }
+
+    return ageParts.join('');
   }
 
   private extractDockerTag(fullImage: string): string {
