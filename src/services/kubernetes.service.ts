@@ -34,4 +34,70 @@ export class KubernetesService {
       );
     }
   }
+
+  async getDeploymentInfo(
+    namespace: string,
+    deploymentName: string,
+  ): Promise<any> {
+    const deploymentUrl = `${this.platformUrl}/apis/apps/v1/namespaces/${namespace}/deployments/${deploymentName}`;
+    const podsUrl = `${this.platformUrl}/api/v1/namespaces/${namespace}/pods`;
+
+    try {
+      // Fetch deployment details
+      const deploymentResponse = await firstValueFrom(
+        this.httpService.get(deploymentUrl, { headers: this.getHeaders() }),
+      );
+      const deployment = deploymentResponse.data;
+
+      // Extract the full image string from the deployment's container spec
+      const fullImage = deployment.spec.template.spec.containers[0].image;
+
+      // Extract the Docker tag from the image string
+      const imageTag = this.extractDockerTag(fullImage);
+
+      // Extract the "app" label from the deployment's selector
+      const appLabel = deployment.spec.selector.matchLabels['app'];
+      if (!appLabel) {
+        throw new HttpException(
+          `Deployment does not have an "app" label in its selector`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Fetch pods with the "app" label matching the deployment's "app" label
+      const podsResponse = await firstValueFrom(
+        this.httpService.get(`${podsUrl}?labelSelector=app=${appLabel}`, {
+          headers: this.getHeaders(),
+        }),
+      );
+      const pods = podsResponse.data.items;
+
+      // Map the pods to their names and statuses
+      const relatedPods = pods.map((pod) => ({
+        name: pod.metadata.name,
+        status: pod.status.phase,
+      }));
+
+      return {
+        imageTag,
+        pods: relatedPods,
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.response?.data || 'Failed to fetch deployment information',
+        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  private extractDockerTag(fullImage: string): string {
+    let tag = '';
+
+    const parts = fullImage.split(':');
+    if (parts.length > 1) {
+      return parts[1];
+    }
+
+    return tag;
+  }
 }

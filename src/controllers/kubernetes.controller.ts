@@ -1,11 +1,11 @@
-import { Controller, Get, Query, Body } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { KubernetesService } from '../services/kubernetes.service';
-import { IService } from '../models/kubernetes.interface';
 
 @Controller('kubernetes')
 export class KubernetesController {
   constructor(private readonly kubernetesService: KubernetesService) {}
 
+  // Existing endpoint
   @Get('blue-green')
   async getServiceBlueGreen(
     @Query('namespace') namespace: string,
@@ -13,15 +13,15 @@ export class KubernetesController {
     @Query('blueLabel') blueLabel: string,
     @Query('greenLabel') greenLabel: string,
   ) {
-    let response: IService = { service: service, blue: false, green: false };
+    let response = { service: service, blue: false, green: false };
 
     try {
-      let labels = await this.kubernetesService.getServiceLabels(
+      const labels = await this.kubernetesService.getServiceLabels(
         namespace,
         service,
       );
 
-      let appLabel = labels['app'];
+      const appLabel = labels['app'];
 
       if (appLabel) {
         response.blue = appLabel === blueLabel;
@@ -29,6 +29,23 @@ export class KubernetesController {
       }
 
       return response;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // New endpoint
+  @Get('deployment-info')
+  async getDeploymentInfo(
+    @Query('namespace') namespace: string,
+    @Query('deployment') deployment: string,
+  ) {
+    try {
+      const deploymentInfo = await this.kubernetesService.getDeploymentInfo(
+        namespace,
+        deployment,
+      );
+      return deploymentInfo;
     } catch (error) {
       return error;
     }
