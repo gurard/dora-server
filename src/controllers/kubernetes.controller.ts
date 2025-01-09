@@ -5,7 +5,6 @@ import { KubernetesService } from '../services/kubernetes.service';
 export class KubernetesController {
   constructor(private readonly kubernetesService: KubernetesService) {}
 
-  // Existing endpoint
   @Get('blue-green')
   async getServiceBlueGreen(
     @Query('namespace') namespace: string,
