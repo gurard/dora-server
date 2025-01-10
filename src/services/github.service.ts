@@ -16,12 +16,13 @@ export class GithubService {
     };
   }
 
-  async fetchPaginatedData(url: string) {
+  async fetchPaginatedData(url: string, params: any = {}) {
     let results: any[] = [];
     let page = 1;
     let hasMore = true;
 
     while (hasMore) {
+      console.log(`fetching url ${url}&page=${page}`);
       const response = await firstValueFrom(
         this.httpService.get(`${url}&page=${page}`, {
           headers: this.getHeaders(),
@@ -46,6 +47,20 @@ export class GithubService {
     let deployments = await this.fetchPaginatedData(url);
 
     return deployments;
+  }
+
+  async getPullRequests(owner: string, repo: string, branch: string) {
+    const url = `${this.platformUrl}/repos/${owner}/${repo}/pulls?state=closed&base=${branch}`;
+    let pullRequests = await this.fetchPaginatedData(url);
+
+    return pullRequests;
+  }
+
+  async getCommits(owner: string, repo: string, pullNumber: number) {
+    const url = `${this.platformUrl}/repos/${owner}/${repo}/pulls/${pullNumber}/commits`;
+    let commits = await this.fetchPaginatedData(url);
+
+    return commits;
   }
 
   // Add other DORA metrics methods here
